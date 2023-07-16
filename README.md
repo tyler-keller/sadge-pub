@@ -6,9 +6,11 @@
 
 ## Do you hate yourself for watching too much YouTube?
 
-#### Well, sure! We all do.
+### Well, sure! We all do.
 
-But, now you can neurotically obsess over your extreme watchtimes like never before!
+#### But, now you can neurotically obsess over your extreme watchtimes like never before!
+
+---
 
 ## Introducing, sadge-pub!
 
