@@ -91,12 +91,13 @@ def robust_request(url):
             print("ConnectionError occurred. Waiting 10 seconds before retrying...")
             time.sleep(10)
 
+print("Preparing to parse watch history.html")
 # Open the file and read its content
 with open('watch-history.html', 'r') as file:
     content = file.read()
 
     # Load the HTML content into BeautifulSoup using lxml parser
-    soup = BeautifulSoup(content, 'html.parser')
+    soup = BeautifulSoup(content, 'lxml')
 
     # Find all the containers
     containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
