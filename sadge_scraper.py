@@ -129,9 +129,6 @@ with open('watch-history.html', 'r') as file:
     
     print("Finished parsing the watch history.html")
 
-    # Load the CSV file into a DataFrame
-    df = pd.read_csv('watch_history.csv')
-
     # Initialize an empty list to store the data
     data = []
 
@@ -152,11 +149,13 @@ with open('watch-history.html', 'r') as file:
 
         num_rows += 1
 
-        time.sleep(.5)
+        # Sleep for 1 second to avoid YT rate limiting
+        time.sleep(1)
 
         if num_rows > 50:
             # Convert the list of data to a DataFrame and save it to a CSV file
             pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
+            print("Saved the data to expanded_watch_history.csv")
             num_rows = 0
 
         print(f"Processed row {index}/{len(df)}")
