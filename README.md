@@ -43,5 +43,5 @@ pip install -r requirements.txt
 python3 sadge_scraper.py
 ```
 
-8. Sit back, relax, and eat some popcorn while YT servers shit themselves over this **super-optimized** and not totally shit script (that will probably have to run for at least 16 hours...)
+8. Sit back, relax, and eat some popcorn while YT servers shit themselves over this **super-optimized** and not totally shit script (that will probably have to run for at least 7 hours...)
 
