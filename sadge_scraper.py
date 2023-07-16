@@ -150,7 +150,7 @@ with open('watch-history.html', 'r') as file:
         num_rows += 1
 
         # Sleep for 1 second to avoid YT rate limiting
-        time.sleep(1)
+        time.sleep(.01)
 
         if num_rows > 50:
             # Convert the list of data to a DataFrame and save it to a CSV file
