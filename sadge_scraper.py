@@ -81,15 +81,20 @@ def scrape_youtube_video(video_link):
     return data
 
 def robust_request(url):
+    count = 0
     while True:
         try:
             # Attempt to make the request
             data = scrape_youtube_video(url)
             return data
         except Exception as e:
+            count += 1
             # If a ConnectionError is raised, wait a few seconds and try again
             print("ConnectionError occurred. Waiting 10 seconds before retrying...")
             time.sleep(10)
+            if count > 10:
+                # Probably not a ConnectionError, but something more serious
+                raise e
 
 print("Parsing watch history.html")
 
@@ -139,7 +144,12 @@ with open('watch-history.html', 'r') as file:
         date = row['date']
 
         # Scrape data from the video link
-        video_data = robust_request(video_link)
+        try:
+            video_data = robust_request(video_link)
+        except Exception as e:
+            print(f"Failed to scrape {video_link}")
+            print(e)
+            continue
 
         # Add the date to the video data
         video_data['watch_date'] = date
