@@ -86,12 +86,13 @@ def robust_request(url):
             # Attempt to make the request
             data = scrape_youtube_video(url)
             return data
-        except ConnectionError:
+        except Exception as e:
             # If a ConnectionError is raised, wait a few seconds and try again
             print("ConnectionError occurred. Waiting 10 seconds before retrying...")
             time.sleep(10)
 
-print("Preparing to parse watch history.html")
+print("Parsing watch history.html")
+
 # Open the file and read its content
 with open('watch-history.html', 'r') as file:
     content = file.read()
@@ -106,7 +107,6 @@ with open('watch-history.html', 'r') as file:
     video_links = []
     dates = []
 
-    print("Parsing the watch history.html")
     # Iterate over the containers and extract the required information
     for container in containers:
         # Find the 'a' tags within the container
@@ -149,8 +149,8 @@ with open('watch-history.html', 'r') as file:
 
         num_rows += 1
 
-        # Sleep for 1 second to avoid YT rate limiting
-        time.sleep(1)
+        # Sleep for .01 second to avoid YT rate limiting
+        time.sleep(.01)
 
         if num_rows > 50:
             # Convert the list of data to a DataFrame and save it to a CSV file
