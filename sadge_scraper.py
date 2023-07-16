@@ -92,65 +92,74 @@ def robust_request(url):
             time.sleep(10)
 
 # Open the file and read its content
-with open('/mnt/data/watch-history.html', 'r') as file:
+with open('watch-history.html', 'r') as file:
     content = file.read()
 
-# Load the HTML content into BeautifulSoup using lxml parser
-soup = BeautifulSoup(content, 'lxml')
+    # Load the HTML content into BeautifulSoup using lxml parser
+    soup = BeautifulSoup(content, 'html.parser')
 
-# Find all the containers
-containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
+    # Find all the containers
+    containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
 
-# Initialize lists to store the extracted data
-video_links = []
-dates = []
+    # Initialize lists to store the extracted data
+    video_links = []
+    dates = []
 
-# Iterate over the containers and extract the required information
-for container in containers:
-    # Find the 'a' tags within the container
-    a_tags = container.find_all('a')
-    
-    # Check if the container has 'a' tags
-    if a_tags:
-        # The first 'a' tag contains the video link and title
-        video_links.append(a_tags[0]['href'])
+    print("Parsing the watch history.html")
+    # Iterate over the containers and extract the required information
+    for container in containers:
+        # Find the 'a' tags within the container
+        a_tags = container.find_all('a')
         
-        # The date is the last piece of text within the container, after the second 'br' tag
-        date = list(container.stripped_strings)[-1]
-        dates.append(date)
+        # Check if the container has 'a' tags
+        if a_tags:
+            # The first 'a' tag contains the video link and title
+            video_links.append(a_tags[0]['href'])
+            
+            # The date is the last piece of text within the container, after the second 'br' tag
+            date = list(container.stripped_strings)[-1]
+            dates.append(date)
 
-# Create a DataFrame
-df = pd.DataFrame({
-    'video_link': video_links,
-    'date': dates
-})
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'video_link': video_links,
+        'date': dates
+    })
+    
+    print("Finished parsing the watch history.html")
 
-# Load the CSV file into a DataFrame
-df = pd.read_csv('watch_history.csv')
+    # Load the CSV file into a DataFrame
+    df = pd.read_csv('watch_history.csv')
 
-# Initialize an empty list to store the data
-data = []
+    # Initialize an empty list to store the data
+    data = []
 
-num_rows = 0
-# Iterate over the rows of the DataFrame
-for index, row in df.iterrows():
-    video_link = row['video_link']
-    date = row['date']
+    num_rows = 0
+    # Iterate over the rows of the DataFrame
+    for index, row in df.iterrows():
+        video_link = row['video_link']
+        date = row['date']
 
-    # Scrape data from the video link
-    video_data = robust_request(video_link)
+        # Scrape data from the video link
+        video_data = robust_request(video_link)
 
-    # Add the date to the video data
-    video_data['watch_date'] = date
+        # Add the date to the video data
+        video_data['watch_date'] = date
 
-    # Add the video data to the list
-    data.append(video_data)
+        # Add the video data to the list
+        data.append(video_data)
 
-    num_rows += 1
+        num_rows += 1
 
-    time.sleep(.5)
+        time.sleep(.5)
 
-    if num_rows > 50:
-        # Convert the list of data to a DataFrame and save it to a CSV file
-        pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
-        num_rows = 0
+        if num_rows > 50:
+            # Convert the list of data to a DataFrame and save it to a CSV file
+            pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
+            num_rows = 0
+
+        print(f"Processed row {index}/{len(df)}")
+
+pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
+
+print("Finished scraping the watch history")
