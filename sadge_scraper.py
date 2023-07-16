@@ -94,6 +94,7 @@ def robust_request(url):
             time.sleep(10)
             if count > 10:
                 # Probably not a ConnectionError, but something more serious
+                count = 0
                 raise e
 
 print("Parsing watch history.html")
