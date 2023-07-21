@@ -92,7 +92,7 @@ def robust_request(url):
             # If a ConnectionError is raised, wait a few seconds and try again
             print("ConnectionError occurred. Waiting 10 seconds before retrying...")
             time.sleep(10)
-            if count > 10:
+            if count >= 3:
                 # Probably not a ConnectionError, but something more serious
                 count = 0
                 raise e
@@ -103,73 +103,74 @@ print("Parsing watch history.html")
 with open('watch-history.html', 'r') as file:
     content = file.read()
 
-    # Load the HTML content into BeautifulSoup using lxml parser
-    soup = BeautifulSoup(content, 'lxml')
+# Load the HTML content into BeautifulSoup using lxml parser
+soup = BeautifulSoup(content, 'lxml')
 
-    # Find all the containers
-    containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
+# Find all the containers
+containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
 
-    # Initialize lists to store the extracted data
-    video_links = []
-    dates = []
+# Initialize lists to store the extracted data
+video_links = []
+dates = []
 
-    # Iterate over the containers and extract the required information
-    for container in containers:
-        # Find the 'a' tags within the container
-        a_tags = container.find_all('a')
-        
-        # Check if the container has 'a' tags
-        if a_tags:
-            # The first 'a' tag contains the video link and title
-            video_links.append(a_tags[0]['href'])
-            
-            # The date is the last piece of text within the container, after the second 'br' tag
-            date = list(container.stripped_strings)[-1]
-            dates.append(date)
-
-    # Create a DataFrame
-    df = pd.DataFrame({
-        'video_link': video_links,
-        'date': dates
-    })
+# Iterate over the containers and extract the required information
+for container in containers:
+    # Find the 'a' tags within the container
+    a_tags = container.find_all('a')
     
-    print("Finished parsing the watch history.html")
+    # Check if the container has 'a' tags
+    if a_tags:
+        # The first 'a' tag contains the video link and title
+        video_links.append(a_tags[0]['href'])
+        
+        # The date is the last piece of text within the container, after the second 'br' tag
+        date = list(container.stripped_strings)[-1]
+        dates.append(date)
 
-    # Initialize an empty list to store the data
-    data = []
+# Create a DataFrame
+df = pd.DataFrame({
+    'video_link': video_links,
+    'date': dates
+})
+    
+print("Finished parsing the watch history.html")
+print(df.head(10))
 
-    num_rows = 0
-    # Iterate over the rows of the DataFrame
-    for index, row in df.iterrows():
-        video_link = row['video_link']
-        date = row['date']
+# Initialize an empty list to store the data
+data = []
 
-        # Scrape data from the video link
-        try:
-            video_data = robust_request(video_link)
-        except Exception as e:
-            print(f"Failed to scrape {video_link}")
-            print(e)
-            continue
+num_rows = 0
+# Iterate over the rows of the DataFrame
+for index, row in df.iterrows():
+    video_link = row['video_link']
+    date = row['date']
 
-        # Add the date to the video data
-        video_data['watch_date'] = date
+    # Scrape data from the video link
+    try:
+        video_data = robust_request(video_link)
+    except Exception as e:
+        print(f"Failed to scrape {video_link}")
+        print(e)
+        continue
 
-        # Add the video data to the list
-        data.append(video_data)
+    # Add the date to the video data
+    video_data['watch_date'] = date
 
-        num_rows += 1
+    # Add the video data to the list
+    data.append(video_data)
 
-        # Sleep for .01 second to avoid YT rate limiting
-        time.sleep(.01)
+    num_rows += 1
 
-        if num_rows > 50:
-            # Convert the list of data to a DataFrame and save it to a CSV file
-            pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
-            print("Saved the data to expanded_watch_history.csv")
-            num_rows = 0
+    # Sleep for .01 second to avoid YT rate limiting
+    time.sleep(.01)
 
-        print(f"Processed row {index}/{len(df)}")
+    if num_rows > 50:
+        # Convert the list of data to a DataFrame and save it to a CSV file
+        pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
+        print("Saved the data to expanded_watch_history.csv")
+        num_rows = 0
+
+    print(f"Processed row {index}/{len(df)}")
 
 pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
 
