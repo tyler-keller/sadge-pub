@@ -1,6 +1,6 @@
 # sadge-pub
 
-### Python scripts for getting more data from Google Takeout's YouTube watch-history.html
+### Python script for getting more data from Google Takeout's YouTube watch-history.html
 
 ---
 
