@@ -4,7 +4,7 @@
 
 ---
 
-## Do you hate yourself for watching too much YouTube?
+## Do you *dislike* yourself for watching too much YouTube?
 
 ### Well, sure! We all do.
 
@@ -45,5 +45,5 @@ pip install -r requirements.txt
 python3 sadge_scraper.py
 ```
 
-8. Sit back, relax, and eat some popcorn while YT servers shit themselves over this **super-optimized** and not totally shit script (that will probably have to run for at least 7 hours...)
+8. Sit back, relax, and eat some popcorn while YT servers *lose* themselves over this **super-optimized** and not totally *bad* script (that will probably have to run for at least 7 hours...)
 
