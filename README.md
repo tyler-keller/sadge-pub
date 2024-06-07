@@ -2,18 +2,6 @@
 
 ### Python script for getting more data from Google Takeout's YouTube watch-history.html
 
----
-
-## Do you *dislike* yourself for watching too much YouTube?
-
-### Well, sure! We all do.
-
-#### But, now you can neurotically obsess over your extreme watchtimes like never before!
-
----
-
-## Introducing, sadge-pub!
-
 #### A one stop *Python script* that lets you go from Google Takeout's terrible dataset to one populated with video metadata, keywords, and channel insights
 
 ---
@@ -24,11 +12,7 @@
 
 2. Scroll to the bottom and check _YouTube and YouTube Music_
 
-<img width="1440" alt="Screenshot 2023-07-16 at 1 32 12 AM" src="https://github.com/tylerckeller/sadge-pub/assets/96822088/9264231a-fa94-4b53-9b4a-ad3936660851">
-
-3. Click _All data included_ and only select history (trust...)
-
-<img width="1552" alt="Screenshot 2023-07-16 at 2 45 10 AM" src="https://github.com/tylerckeller/sadge-pub/assets/96822088/4a0c1b40-93a7-43c6-8765-42934fc21b06">
+3. Click _All data included_ and only select history
 
 4. _Next Step_ -> _Create Export_
 
@@ -45,5 +29,5 @@ pip install -r requirements.txt
 python3 sadge_scraper.py
 ```
 
-8. Sit back, relax, and eat some popcorn while YT servers *lose* themselves over this **super-optimized** and not totally *bad* script (that will probably have to run for at least 7 hours...)
+8. Sit back, relax, (length of time to completion subject to watchtimes)
 
