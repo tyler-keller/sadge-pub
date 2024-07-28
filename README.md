@@ -18,9 +18,11 @@
 
 5. Download the .zip from Gmail
 
-6. Unpack the .zip and move the watch-history.html file to the /sadge-pub/ directory
+6. `git clone https://github.com/tyler-keller/sadge-pub.git`
 
-7. Run the following:
+7. Unpack the .zip and move the watch-history.html file to the ./sadge-pub/ directory
+
+8. Run the following:
 
 ```
 python3 -m venv venv
@@ -29,5 +31,7 @@ pip install -r requirements.txt
 python3 sadge_scraper.py
 ```
 
-8. Sit back, relax, (length of time to completion subject to watchtimes)
+8. Sit back, relax,
+  
+Note: length of time to completion subject to watchtimes.
 
