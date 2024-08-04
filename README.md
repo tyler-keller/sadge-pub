@@ -24,7 +24,7 @@
 git clone https://github.com/tyler-keller/sadge-pub.git`
 ```
 
-9. Unpack the .zip and move the watch-history.html file to the ./sadge-pub/ directory
+9. Unpack the .zip and move the watch-history.html file to the ./sadge-pub/data/ directory
 
 10. Run the following:
 
@@ -35,5 +35,4 @@ pip install -r requirements.txt
 python3 sadge_scraper.py
 ```
   
-Note: length of time to completion subject to watchtimes.
-
+Note: length of time to completion subject to watchtimes and Google's rate limiter.

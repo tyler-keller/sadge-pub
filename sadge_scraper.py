@@ -24,7 +24,6 @@ def get_video_id(html):
 def get_keywords(html):
     match = re.search(r'"keywords":\s*\[(.*?)\]', html)
     if match:
-        # Extract the matched group and convert it to a list
         keywords_string = '[' + match.group(1) + ']'
         keywords_list = json.loads(keywords_string)
         return keywords_list
@@ -55,15 +54,11 @@ def get_channel_profile(html):
     match = re.search(r'"ownerProfileUrl":\s*"([^"]*)"', html)
     return match.group(1) if match else None
 
-# Define a function to scrape data from a YouTube video page
 def scrape_youtube_video(video_link):
-    # Send a GET request to the video URL
     response = requests.get(video_link)
 
-    # Load the page content into BeautifulSoup
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Extract the required data
     data = {
         "video_url": video_link,
         "video_title": get_title(str(soup)),
@@ -84,68 +79,58 @@ def robust_request(url):
     count = 0
     while True:
         try:
-            # Attempt to make the request
             data = scrape_youtube_video(url)
             return data
         except Exception as e:
             count += 1
-            # If a ConnectionError is raised, wait a few seconds and try again
             print("ConnectionError occurred. Waiting 10 seconds before retrying...")
             time.sleep(10)
             if count >= 3:
-                # Probably not a ConnectionError, but something more serious
                 count = 0
                 raise e
 
 print("Parsing watch history.html")
 
-# Open the file and read its content
-with open('watch-history.html', 'r') as file:
-    content = file.read()
+# if html:
+# with open('watch-history.html', 'r') as file:
+#     content = file.read()
 
-# Load the HTML content into BeautifulSoup using lxml parser
-soup = BeautifulSoup(content, 'lxml')
+# soup = BeautifulSoup(content, 'lxml')
 
-# Find all the containers
-containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
+# containers = soup.find_all('div', class_='content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1')
 
-# Initialize lists to store the extracted data
-video_links = []
-dates = []
+# video_links = []
+# dates = []
 
-# Iterate over the containers and extract the required information
-for container in containers:
-    # Find the 'a' tags within the container
-    a_tags = container.find_all('a')
+# for container in containers:
+#     a_tags = container.find_all('a')
     
-    # Check if the container has 'a' tags
-    if a_tags:
-        # The first 'a' tag contains the video link and title
-        video_links.append(a_tags[0]['href'])
+#     if a_tags:
+#         video_links.append(a_tags[0]['href'])
         
-        # The date is the last piece of text within the container, after the second 'br' tag
-        date = list(container.stripped_strings)[-1]
-        dates.append(date)
+#         date = list(container.stripped_strings)[-1]
+#         dates.append(date)
 
-# Create a DataFrame
-df = pd.DataFrame({
-    'video_link': video_links,
-    'date': dates
-})
+# df = pd.DataFrame({
+#     'video_link': video_links,
+#     'date': dates
+# })
     
-print("Finished parsing the watch history.html")
-print(df.head(10))
+# print("Finished parsing the watch history.html")
+# print(df.head(10))
+from datetime import datetime
+import time
 
-# Initialize an empty list to store the data
+df = pd.read_json('./data/history/watch-history.json')
+date_string = datetime.now().strftime('%Y_%m_%d')
+
 data = []
 
 num_rows = 0
-# Iterate over the rows of the DataFrame
 for index, row in df.iterrows():
-    video_link = row['video_link']
-    date = row['date']
 
-    # Scrape data from the video link
+    video_link = row['titleUrl']
+
     try:
         video_data = robust_request(video_link)
     except Exception as e:
@@ -153,25 +138,21 @@ for index, row in df.iterrows():
         print(e)
         continue
 
-    # Add the date to the video data
-    video_data['watch_date'] = date
+    video_data['watch_date'] = row['time']
 
-    # Add the video data to the list
     data.append(video_data)
 
     num_rows += 1
 
-    # Sleep for .01 second to avoid YT rate limiting
     time.sleep(.01)
 
     if num_rows > 50:
-        # Convert the list of data to a DataFrame and save it to a CSV file
-        pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
-        print("Saved the data to expanded_watch_history.csv")
+        pd.DataFrame(data).to_csv(f'expanded_watch_history_{date_string}.csv', index=False)
+        print(f"Saved the data to expanded_watch_history.csv ({index}/{df.shape[0]})")
         num_rows = 0
 
     print(f"Processed row {index}/{len(df)}")
 
-pd.DataFrame(data).to_csv('expanded_watch_history.csv', index=False)
+pd.DataFrame(data).to_csv(f'expanded_watch_history_{date_string}.csv', index=False)
 
 print("Finished scraping the watch history")
