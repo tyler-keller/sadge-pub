@@ -4,6 +4,15 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import datetime
+import os
+
+# file_path = './data/expanded_watch_history.csv'
+
+# if os.path.isfile(file_path):
+#     df = pd.read_csv(file_path)
+# else:
+#     st.error(f"File '{file_path}' does not exist.")
+#     st.stop()
 
 df = pd.read_csv('data/expanded_watch_history_2024_08_03.csv')
 
@@ -16,6 +25,7 @@ df['month'] = df['watch_date'].dt.month
 df['year'] = df['watch_date'].dt.year
 df['hour'] = df['watch_date'].dt.hour
 df['day_of_week'] = df['watch_date'].dt.day_of_week
+df['day_of_week_name'] = df['watch_date'].dt.day_name()
 
 df['category'] = df['category'].str.replace('\\u0026', 'and')
 # df['watch_date'] = pd.to_datetime(df['watch_date'], format="mixed")
@@ -108,3 +118,8 @@ for i, tab in enumerate(tabs):
         )
 
         st.plotly_chart(fig)
+
+a_df = df.groupby(['day_of_week_name']).size().to_frame('contributions').reset_index()
+a_df = pd.get_dummies(a_df)
+fig = px.imshow(a_df)
+st.plotly_chart(fig)
